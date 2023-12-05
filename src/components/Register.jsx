@@ -27,7 +27,7 @@ const Register = () => {
   const [validConfirmPwd, setValidConfirmPwd] = useState(false);
   const [confirmPwdFocus, setConfirmPwdFocus] = useState(false);
 
-  const [errMsg, setErrMsg] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Register = () => {
   }, [password, confirmPwd]);
 
   useEffect(() => {
-    setErrMsg("");
+    setErrorMessage("");
   }, [username, password, confirmPwd]);
 
   const handleSubmit = async (e) => {
@@ -56,7 +56,7 @@ const Register = () => {
     const validateUsername = USER_REGEX.test(username);
     const validatePwd = PWD_REGEX.test(password);
     if (!validateUsername || !validatePwd) {
-      setErrMsg("Invalid Entry");
+      setErrorMessage("Invalid Entry");
       return;
     }
     try {
@@ -76,11 +76,11 @@ const Register = () => {
       return;
     } catch (err) {
       if (!err.response) {
-        setErrMsg("Server did not respond");
+        setErrorMessage("Server did not respond");
       } else if (err.response?.status === 409) {
-        setErrMsg("Username already in use");
+        setErrorMessage("Username already in use");
       } else {
-        setErrMsg("Registration unsuccessful");
+        setErrorMessage("Registration unsuccessful");
       }
       errorRef.current.focus();
     }
@@ -90,16 +90,16 @@ const Register = () => {
     <section>
       <p
         ref={errorRef}
-        className={errMsg ? "errmsg" : "offscreen"}
+        className={errorMessage ? "errmsg" : "offscreen"}
         aria-live="assertive"
       >
-        {errMsg}
+        {errorMessage}
       </p>
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
         {/* Username input */}
         <label htmlFor="username">
-          Username:
+          Username
           <span className={validUsername ? "valid" : "hide"}>
             <FontAwesomeIcon icon={faCheck} />
           </span>
@@ -113,6 +113,7 @@ const Register = () => {
           ref={usernameRef}
           autoComplete="off"
           onChange={(e) => setUsername(e.target.value)}
+          value={username}
           required
           aria-invalid={validUsername ? "false" : "true"}
           aria-describedby="uidnote"
@@ -136,7 +137,7 @@ const Register = () => {
         </p>
         {/* Password input */}
         <label htmlFor="password">
-          Password:
+          Password
           <span className={validPassword ? "valid" : "hide"}>
             <FontAwesomeIcon icon={faCheck} />
           </span>
@@ -148,6 +149,7 @@ const Register = () => {
           type="password"
           id="password"
           onChange={(e) => setPassword(e.target.value)}
+          value={password}
           required
           aria-invalid={validPassword ? "false" : "true"}
           aria-describedby="pwdnote"
@@ -175,7 +177,7 @@ const Register = () => {
         </p>
         {/* Password confirmation input */}
         <label htmlFor="confirm_pwd">
-          Confirm password:
+          Confirm password
           <span className={validConfirmPwd && confirmPwd ? "valid" : "hide"}>
             <FontAwesomeIcon icon={faCheck} />
           </span>
@@ -187,6 +189,7 @@ const Register = () => {
           type="password"
           id="confirm_pwd"
           onChange={(e) => setConfirmPwd(e.target.value)}
+          value={confirmPwd}
           required
           aria-invalid={validConfirmPwd ? "false" : "true"}
           aria-describedby="confirmnote"

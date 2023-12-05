@@ -76,7 +76,7 @@ const Register = () => {
       return;
     } catch (err) {
       if (!err.response) {
-        setErrorMessage("Server did not respond");
+        setErrorMessage("No response from server");
       } else if (err.response?.status === 409) {
         setErrorMessage("Username already in use");
       } else {

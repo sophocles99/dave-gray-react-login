@@ -5,21 +5,23 @@ import {
   faInfoCircle,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "../api/axios";
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const REGISTER_URL = "/register";
 
 const Register = () => {
   const usernameRef = useRef();
-  const errRef = useRef();
+  const errorRef = useRef();
 
   const [username, setUsername] = useState("");
   const [validUsername, setValidUsername] = useState(false);
   const [usernameFocus, setUsernameFocus] = useState(false);
 
-  const [pwd, setPwd] = useState("");
-  const [validPwd, setValidPwd] = useState(false);
-  const [pwdFocus, setPwdFocus] = useState(false);
+  const [password, setPassword] = useState("");
+  const [validPassword, setValidPassword] = useState(false);
+  const [passwordFocus, setPasswordFocus] = useState(false);
 
   const [confirmPwd, setConfirmPwd] = useState("");
   const [validConfirmPwd, setValidConfirmPwd] = useState(false);
@@ -38,31 +40,56 @@ const Register = () => {
   }, [username]);
 
   useEffect(() => {
-    const result = PWD_REGEX.test(pwd);
-    const isMatch = pwd === confirmPwd;
-    setValidPwd(result);
+    const result = PWD_REGEX.test(password);
+    const isMatch = password === confirmPwd;
+    setValidPassword(result);
     setValidConfirmPwd(isMatch);
-  }, [pwd, confirmPwd]);
+  }, [password, confirmPwd]);
 
   useEffect(() => {
     setErrMsg("");
-  }, [username, pwd, confirmPwd]);
+  }, [username, password, confirmPwd]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if button is enabled with JS hack
-    const v1 = USER_REGEX.test(username);
-    const v2 = PWD_REGEX.test(pwd);
-    if (!v1 || !v2) {
+    // in case button is enabled with JS hack
+    const validateUsername = USER_REGEX.test(username);
+    const validatePwd = PWD_REGEX.test(password);
+    if (!validateUsername || !validatePwd) {
       setErrMsg("Invalid Entry");
       return;
+    }
+    try {
+      const response = await axios.post(
+        REGISTER_URL,
+        { username, password },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+      console.log(response.accessToken);
+      console.log(JSON.stringify(response));
+      setSuccess(true);
+      // clear input elements
+      return;
+    } catch (err) {
+      if (!err.response) {
+        setErrMsg("Server did not respond");
+      } else if (err.response?.status === 409) {
+        setErrMsg("Username already in use");
+      } else {
+        setErrMsg("Registration unsuccessful");
+      }
+      errorRef.current.focus();
     }
   };
 
   return (
     <section>
       <p
-        ref={errRef}
+        ref={errorRef}
         className={errMsg ? "errmsg" : "offscreen"}
         aria-live="assertive"
       >
@@ -95,7 +122,9 @@ const Register = () => {
         <p
           id="uidnote"
           className={
-            usernameFocus && username && !validUsername ? "instructions" : "offscreen"
+            usernameFocus && username && !validUsername
+              ? "instructions"
+              : "offscreen"
           }
         >
           <FontAwesomeIcon icon={faInfoCircle} />
@@ -108,26 +137,28 @@ const Register = () => {
         {/* Password input */}
         <label htmlFor="password">
           Password:
-          <span className={validPwd ? "valid" : "hide"}>
+          <span className={validPassword ? "valid" : "hide"}>
             <FontAwesomeIcon icon={faCheck} />
           </span>
-          <span className={validPwd || !pwd ? "hide" : "invalid"}>
+          <span className={validPassword || !password ? "hide" : "invalid"}>
             <FontAwesomeIcon icon={faTimes} />
           </span>
         </label>
         <input
           type="password"
           id="password"
-          onChange={(e) => setPwd(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           required
-          aria-invalid={validPwd ? "false" : "true"}
+          aria-invalid={validPassword ? "false" : "true"}
           aria-describedby="pwdnote"
-          onFocus={() => setPwdFocus(true)}
-          onBlur={() => setPwdFocus(false)}
+          onFocus={() => setPasswordFocus(true)}
+          onBlur={() => setPasswordFocus(false)}
         />
         <p
           id="pwdnote"
-          className={pwdFocus && !validPwd ? "instructions" : "offscreen"}
+          className={
+            passwordFocus && !validPassword ? "instructions" : "offscreen"
+          }
         >
           <FontAwesomeIcon icon={faInfoCircle} />
           8 to 24 characters.
@@ -172,7 +203,9 @@ const Register = () => {
           Must match the first password field.
         </p>
         <button
-          disabled={!validUsername || !validPwd || !validConfirmPwd ? true : false}
+          disabled={
+            !validUsername || !validPassword || !validConfirmPwd ? true : false
+          }
         >
           Sign Up
         </button>

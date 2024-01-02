@@ -16,7 +16,7 @@ const Users = () => {
         console.log(response.data);
         isMounted && setUsers(response.data);
       } catch (error) {
-        console.error(error);
+        if (!error.code === "ERR_CANCELED") console.error(error);
       }
     };
 

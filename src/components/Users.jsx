@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const Users = () => {
   const [users, setUsers] = useState();
   const axiosPrivate = useAxiosPrivate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
@@ -16,7 +19,10 @@ const Users = () => {
         console.log(response.data);
         isMounted && setUsers(response.data);
       } catch (error) {
-        if (!error.code === "ERR_CANCELED") console.error(error);
+        if (error.code !== "ERR_CANCELED") { // Ignore ERR_CANCELED error produced by StrictMode unmounting component immediately
+          console.error(error);
+          navigate("/login", { state: { from: location }, replace: true });
+        }
       }
     };
 

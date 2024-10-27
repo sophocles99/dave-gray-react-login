@@ -1,34 +1,34 @@
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCheck,
   faInfoCircle,
   faTimes,
-} from "@fortawesome/free-solid-svg-icons";
-import axios from "../api/axios";
+} from '@fortawesome/free-solid-svg-icons';
+import axios from '../api/axios';
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = "/register";
+const REGISTER_URL = '/register';
 
 const Register = () => {
   const usernameRef = useRef();
   const errorRef = useRef();
 
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState('');
   const [validUsername, setValidUsername] = useState(false);
   const [usernameFocus, setUsernameFocus] = useState(false);
 
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const [validPassword, setValidPassword] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
 
-  const [confirmPwd, setConfirmPwd] = useState("");
+  const [confirmPwd, setConfirmPwd] = useState('');
   const [validConfirmPwd, setValidConfirmPwd] = useState(false);
   const [confirmPwdFocus, setConfirmPwdFocus] = useState(false);
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const Register = () => {
   }, [password, confirmPwd]);
 
   useEffect(() => {
-    setErrorMessage("");
+    setErrorMessage('');
   }, [username, password, confirmPwd]);
 
   const handleSubmit = async (e) => {
@@ -57,7 +57,7 @@ const Register = () => {
     const validateUsername = USER_REGEX.test(username);
     const validatePwd = PWD_REGEX.test(password);
     if (!validateUsername || !validatePwd) {
-      setErrorMessage("Invalid Entry");
+      setErrorMessage('Invalid Entry');
       return;
     }
     try {
@@ -65,22 +65,22 @@ const Register = () => {
         REGISTER_URL,
         { username, password },
         {
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
-        }
+        },
       );
-      setUsername("");
-      setPassword("");
-      setConfirmPwd("");
+      setUsername('');
+      setPassword('');
+      setConfirmPwd('');
       setSuccess(true);
       return;
     } catch (err) {
       if (!err.response) {
-        setErrorMessage("No response from server");
+        setErrorMessage('No response from server');
       } else if (err.response?.status === 409) {
-        setErrorMessage("Username already in use");
+        setErrorMessage('Username already in use');
       } else {
-        setErrorMessage("Registration unsuccessful");
+        setErrorMessage('Registration unsuccessful');
       }
       errorRef.current.focus();
     }
@@ -92,50 +92,50 @@ const Register = () => {
         <section>
           <h1>Registered!</h1>
           <p>Successfully registered new user {username}</p>
-          <div className="flexGrow">
-            <Link to="/login">Login</Link>
+          <div className='flexGrow'>
+            <Link to='/login'>Login</Link>
           </div>
         </section>
       ) : (
         <section>
           <p
             ref={errorRef}
-            className={errorMessage ? "errmsg" : "offscreen"}
-            aria-live="assertive"
+            className={errorMessage ? 'errmsg' : 'offscreen'}
+            aria-live='assertive'
           >
             {errorMessage}
           </p>
           <h1>Register</h1>
           <form onSubmit={handleSubmit}>
             {/* Username input */}
-            <label htmlFor="username">
+            <label htmlFor='username'>
               Username
-              <span className={validUsername ? "valid" : "hide"}>
+              <span className={validUsername ? 'valid' : 'hide'}>
                 <FontAwesomeIcon icon={faCheck} />
               </span>
-              <span className={validUsername || !username ? "hide" : "invalid"}>
+              <span className={validUsername || !username ? 'hide' : 'invalid'}>
                 <FontAwesomeIcon icon={faTimes} />
               </span>
             </label>
             <input
-              type="text"
-              id="username"
+              type='text'
+              id='username'
               ref={usernameRef}
-              autoComplete="off"
+              autoComplete='off'
               onChange={(e) => setUsername(e.target.value)}
               value={username}
               required
-              aria-invalid={validUsername ? "false" : "true"}
-              aria-describedby="uidnote"
+              aria-invalid={validUsername ? 'false' : 'true'}
+              aria-describedby='uidnote'
               onFocus={() => setUsernameFocus(true)}
               onBlur={() => setUsernameFocus(false)}
             />
             <p
-              id="uidnote"
+              id='uidnote'
               className={
                 usernameFocus && username && !validUsername
-                  ? "instructions"
-                  : "offscreen"
+                  ? 'instructions'
+                  : 'offscreen'
               }
             >
               <FontAwesomeIcon icon={faInfoCircle} />
@@ -146,30 +146,30 @@ const Register = () => {
               Letters, numbers, underscores and hyphens allowed.
             </p>
             {/* Password input */}
-            <label htmlFor="password">
+            <label htmlFor='password'>
               Password
-              <span className={validPassword ? "valid" : "hide"}>
+              <span className={validPassword ? 'valid' : 'hide'}>
                 <FontAwesomeIcon icon={faCheck} />
               </span>
-              <span className={validPassword || !password ? "hide" : "invalid"}>
+              <span className={validPassword || !password ? 'hide' : 'invalid'}>
                 <FontAwesomeIcon icon={faTimes} />
               </span>
             </label>
             <input
-              type="password"
-              id="password"
+              type='password'
+              id='password'
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               required
-              aria-invalid={validPassword ? "false" : "true"}
-              aria-describedby="pwdnote"
+              aria-invalid={validPassword ? 'false' : 'true'}
+              aria-describedby='pwdnote'
               onFocus={() => setPasswordFocus(true)}
               onBlur={() => setPasswordFocus(false)}
             />
             <p
-              id="pwdnote"
+              id='pwdnote'
               className={
-                passwordFocus && !validPassword ? "instructions" : "offscreen"
+                passwordFocus && !validPassword ? 'instructions' : 'offscreen'
               }
             >
               <FontAwesomeIcon icon={faInfoCircle} />
@@ -178,44 +178,44 @@ const Register = () => {
               Must include uppercase and lowercase letters, a number and a
               special character.
               <br />
-              Allowed special characters:{" "}
-              <span aria-label="exclamation mark">!</span>{" "}
-              <span aria-label="at symbol">@</span>{" "}
-              <span aria-label="hashtag">#</span>{" "}
-              <span aria-label="dollar sign">$</span>{" "}
-              <span aria-label="percent">%</span>
+              Allowed special characters:{' '}
+              <span aria-label='exclamation mark'>!</span>{' '}
+              <span aria-label='at symbol'>@</span>{' '}
+              <span aria-label='hashtag'>#</span>{' '}
+              <span aria-label='dollar sign'>$</span>{' '}
+              <span aria-label='percent'>%</span>
             </p>
             {/* Password confirmation input */}
-            <label htmlFor="confirm_pwd">
+            <label htmlFor='confirm_pwd'>
               Confirm password
               <span
-                className={validConfirmPwd && confirmPwd ? "valid" : "hide"}
+                className={validConfirmPwd && confirmPwd ? 'valid' : 'hide'}
               >
                 <FontAwesomeIcon icon={faCheck} />
               </span>
               <span
-                className={validConfirmPwd || !confirmPwd ? "hide" : "invalid"}
+                className={validConfirmPwd || !confirmPwd ? 'hide' : 'invalid'}
               >
                 <FontAwesomeIcon icon={faTimes} />
               </span>
             </label>
             <input
-              type="password"
-              id="confirm_pwd"
+              type='password'
+              id='confirm_pwd'
               onChange={(e) => setConfirmPwd(e.target.value)}
               value={confirmPwd}
               required
-              aria-invalid={validConfirmPwd ? "false" : "true"}
-              aria-describedby="confirmnote"
+              aria-invalid={validConfirmPwd ? 'false' : 'true'}
+              aria-describedby='confirmnote'
               onFocus={() => setConfirmPwdFocus(true)}
               onBlur={() => setConfirmPwdFocus(false)}
             />
             <p
-              id="confirmnote"
+              id='confirmnote'
               className={
                 confirmPwdFocus && !validConfirmPwd
-                  ? "instructions"
-                  : "offscreen"
+                  ? 'instructions'
+                  : 'offscreen'
               }
             >
               <FontAwesomeIcon icon={faInfoCircle} />
@@ -233,8 +233,8 @@ const Register = () => {
             <p>
               Already registered?
               <br />
-              <span className="line">
-              <Link to="/login">Sign In</Link>
+              <span className='line'>
+                <Link to='/login'>Sign In</Link>
               </span>
             </p>
           </form>

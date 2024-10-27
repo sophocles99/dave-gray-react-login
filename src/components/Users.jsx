@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 const Users = () => {
   const [users, setUsers] = useState();
@@ -13,15 +13,16 @@ const Users = () => {
     const controller = new AbortController();
     const getUsers = async () => {
       try {
-        const response = await axiosPrivate.get("/users", {
+        const response = await axiosPrivate.get('/users', {
           signal: controller.signal,
         });
         console.log(response.data);
         isMounted && setUsers(response.data);
       } catch (error) {
-        if (error.code !== "ERR_CANCELED") { // Ignore ERR_CANCELED error produced by StrictMode unmounting component immediately
+        if (error.code !== 'ERR_CANCELED') {
+          // Ignore ERR_CANCELED error produced by StrictMode unmounting component immediately
           console.error(error);
-          navigate("/login", { state: { from: location }, replace: true });
+          navigate('/login', { state: { from: location }, replace: true });
         }
       }
     };

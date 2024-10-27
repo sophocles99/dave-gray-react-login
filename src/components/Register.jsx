@@ -61,7 +61,7 @@ const Register = () => {
       return;
     }
     try {
-      const response = await axios.post(
+      await axios.post(
         REGISTER_URL,
         { username, password },
         {
